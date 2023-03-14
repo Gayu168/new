@@ -5,8 +5,8 @@ import pandas as pd
 pd.options.display.max_columns = None
 pd.options.display.max_rows = None
 pd.options.display.width = 1000
-from Profiling import json_profiling
-from pandas_testing import fun_check,date_conversion,data_rounding,arithmethic_functions
+#from Profiling import json_profiling
+#from pandas_testing import fun_check,date_conversion,data_rounding,arithmethic_functions
 from pyspark import SparkConf,SparkContext
 import pyspark
 from pyspark.sql import SparkSession
@@ -98,9 +98,9 @@ def compare_fun(source,target):
 
         """ Columns are arranged together in a single Dataframe"""
 
-        s_col = source.withColumn(source[source_col],col(f's_{source_col}'))
-        t_col= target.withColumn(target[target_col],col(f't_{source_col}'))
-        df = pd.concat([s_col,t_col],axis = 1)
+        s_col = source.withColumnRenamed(col(source_col),col(f's_{source_col}'))
+        t_col = target.withColumnRenamed(col(target_col),col(f't_{source_col}'))
+        df = pd.concat([s_col, t_col], axis=1)
         return df
 
     bool_df = pd.DataFrame()
@@ -190,13 +190,13 @@ class FileConnection:
 
     def read_parquet(self,file_path:str) -> pd.DataFrame:
         try:
-            return pq.read_table(file_path)
+            return pd.read_table(file_path)
         except Exception as e:
             raise ValueError(f"Error reading parquet file: {e}")
 
     def read_json(self,file_path:str) -> pd.DataFrame:
         try:
-            return pq.read_json(file_path)
+            return pd.read_json(file_path)
         except Exception as e:
             raise ValueError(f"Error reading json file: {e}")
 
@@ -206,7 +206,6 @@ class FileConnection:
             if file_type1 not in formats:
                 raise ValueError(f"Unsupported file type: {file_type1}")
             file1 = formats[file_type1](file_path1)
-
             return file1
         except Exception as e:
             raise ValueError(f"Error comparing files: {e}")
@@ -245,20 +244,21 @@ def get_type_file(type: str) -> dict:
          print("Source Database schema", db_schema_src)
          columnnames_sr, source = source_connect(db_type)
          sort_sr = sorting(source)
-         source_profiling = json_profiling(source)
-         print(source_profiling)
+         #source_profiling = json_profiling(source)
+
+         #print(source_profiling)
          return sort_sr
 
 if __name__ == '__main__':
     sc = SparkContext(master="local", appName="spark_demo")
     spark = SparkSession.builder.appName("SparkByExamples.com").getOrCreate()
     src_type = input("Enter the type of file: 1-Flatfile  2-Database :")
-    st = time.time()
+    #st = time.time()
     source = get_type_file(src_type)
-    et = time.time()
-    processtime = st-et
-    final = processtime/60
-    print(final,"Minutes")
+    #et = time.time()
+    #processtime = st-et
+    #final = processtime/60
+   # print(final,"Minutes")
     #print('Execution time:', time.strftime("%H:%M:%S", time.gmtime(processtime)))
     #col_changed_sr = fun_check(source)
     #print(col_changed_sr)
