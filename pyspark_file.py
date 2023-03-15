@@ -81,8 +81,12 @@ def compare_fun(source,target):
 
          """  Getting  column name of source and target from user and concatenate with target """
 
-         s_eq=source[source_col].eq(target[target_col]).rename(f's_{source_col}')
-         t_eq = target[target_col].eq(source[source_col]).rename(f't_{source_col}')
+         #s_eq=source[source_col].eq(target[target_col]).rename(f's_{source_col}')
+         #t_eq = target[target_col].eq(source[source_col]).rename(f't_{source_col}')
+         s_col = source.select(col(source_col)).toPandas()  # .rename(f's_{source_col}')
+         t_col = target.select(col(target_col)).toPandas()  # .rename(f't_{source_col}')
+         s_eq = s_col.eq(t_col)
+         t_eq = t_col.eq(s_col)
          df =pd.concat([s_eq,t_eq],axis = 1)
          return df
 
@@ -98,8 +102,10 @@ def compare_fun(source,target):
 
         """ Columns are arranged together in a single Dataframe"""
 
-        s_col = source.withColumnRenamed(col(source_col),col(f's_{source_col}'))
-        t_col = target.withColumnRenamed(col(target_col),col(f't_{source_col}'))
+        #s_col = source.withColumnRenamed(col(source_col),col(f's_{source_col}'))
+        #t_col = target.withColumnRenamed(col(target_col),col(f't_{source_col}'))
+        s_col = source.select(col(source_col)).toPandas()
+        t_col = target.select(col(target_col)).toPandas()
         df = pd.concat([s_col, t_col], axis=1)
         return df
 
