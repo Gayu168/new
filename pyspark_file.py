@@ -11,6 +11,7 @@ from pyspark import SparkConf,SparkContext
 import pyspark
 from pyspark.sql import SparkSession
 import time
+from pyspark.sql.functions import concat,col
 from pyspark.sql.functions import *
 
 
@@ -83,11 +84,12 @@ def compare_fun(source,target):
 
          #s_eq=source[source_col].eq(target[target_col]).rename(f's_{source_col}')
          #t_eq = target[target_col].eq(source[source_col]).rename(f't_{source_col}')
-         s_col = source.select(col(source_col)).toPandas()  # .rename(f's_{source_col}')
-         t_col = target.select(col(target_col)).toPandas()  # .rename(f't_{source_col}')
+         s_col = source.select(col(source_col)) # .rename(f's_{source_col}')
+         t_col = target.select(col(target_col))  # .rename(f't_{source_col}')
          s_eq = s_col.eq(t_col)
          t_eq = t_col.eq(s_col)
-         df =pd.concat([s_eq,t_eq],axis = 1)
+         df = s_eq.concat(t_eq,axis = 1)
+         print(df)
          return df
 
     def color_mismatch(val):
@@ -104,9 +106,10 @@ def compare_fun(source,target):
 
         #s_col = source.withColumnRenamed(col(source_col),col(f's_{source_col}'))
         #t_col = target.withColumnRenamed(col(target_col),col(f't_{source_col}'))
-        s_col = source.select(col(source_col)).toPandas()
-        t_col = target.select(col(target_col)).toPandas()
-        df = pd.concat([s_col, t_col], axis=1)
+        s_col = source.select(col(source_col))
+        t_col = target.select(col(target_col))
+        print(type(s_col))
+        df = s_col.concat(t_col,axis=1)
         return df
 
     bool_df = pd.DataFrame()
