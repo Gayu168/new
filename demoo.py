@@ -4,15 +4,25 @@ from pyspark.sql import SparkSession
 
 #sc = SparkContext(master="local", appName="spark_demo")
 #spark = SparkSession.builder.appName("SparkByExamples.com").getOrCreate()
-data = [('James','','Smith','1991-04-01','M',3000),
-  ('Michael','Rose','','2000-05-19','M',4000),
-  ('Robert','','Williams','1978-09-05','M',4000),
-  ('Maria','Anne','Jones','1967-12-01','F',4000),
-  ('Jen','Mary','Brown','1980-02-17','F',-1)]
+psdf = ps.DataFrame(
+    {'a': [1, 2, 3, 4, 5, 6],
+     'b': [100, 200, 300, 400, 500, 600],
+     'c': ["one", "two", "three", "four", "five", "six"]},
+    index=[10, 20, 30, 40, 50, 60])
 
-columns = ["firstname","middlename","lastname","dob","gender","salary"]
-df = ps.DataFrame(data=data, schema = columns)
-df.show()
+print(psdf)
+
+psdf1 = ps.DataFrame(
+    {'a': [10, 20, 30, 40, 50, 60],
+     'b': [1000, 2000, 3000, 4000, 5000, 6000],
+     'c': ["one100", "two200", "three300", "four400", "five500", "six600"]},
+    index=[1, 2, 3, 4, 5, 6])
+
+print(psdf1)
+result = ps.concat([psdf,psdf1],axis=1)
+print(result)
+
+
 #df2=df.select(concat(df.firstname,df.middlename,df.lastname)
               #.alias("FullName"),"dob","gender","salary")
 #df2.show(truncate=False)
