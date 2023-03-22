@@ -1,6 +1,7 @@
 from __future__ import annotations
 import mysql.connector
 import pandas as pd
+import numpy as np
 #import pyarrow as pq
 import pyspark.pandas as ps
 import pyspark.pandas as ps
@@ -88,12 +89,14 @@ def compare_fun(source,target):
          s_eq = source[source_col].eq(target[target_col]).rename(f's_{source_col}')
          t_eq = target[target_col].eq(source[source_col]).rename(f't_{source_col}')
          #s_col = source.select(col(source_col)) # .rename(f's_{source_col}')
+         print(s_eq)
+         print(t_eq)
          #t_col = target.select(col(target_col))  # .rename(f't_{source_col}')
         ## s_eq = s_col.eq(t_col)
         # t_eq = t_col.eq(s_col)
          #df = ps.concat([s_eq,t_eq],axis = 1)
          df = ps.concat([s_eq,t_eq], axis=1)
-         #print(df)
+         print(df)
          return df
 
     def color_mismatch(val):
@@ -109,12 +112,12 @@ def compare_fun(source,target):
         """ Columns are arranged together in a single Dataframe"""
 
         s_col = source[source_col].rename(f's_{source_col}')
-        print(s_col)
         #s_col = ps.series
-        type(s_col)
+        #type(s_col)
         t_col =target[target_col].rename(f't_{source_col}')
        # t_col = ps.series
         df = ps.concat([s_col, t_col], axis=1)
+        print(df)
         return df
 
         #s_col = source.withColumnRenamed(col(source_col),col(f's_{source_col}'))
@@ -127,16 +130,18 @@ def compare_fun(source,target):
 
     b_df = ps.DataFrame()
     original_df = ps.DataFrame()
-    for _ in range(3):                ###len(tuple(zip(source,target)))):
+    for _ in range(2):                ###len(tuple(zip(source,target)))):
         source_col = input('Choose the source col:')
         target_col = input('Choose the target col:')
         concat_col_= concat_col(source_col,target_col)
         original_df = ps.concat([original_df,concat_col_],axis = 1)
         mask_= mask(source_col,target_col)
+        print(mask)
         b_df = ps.concat([b_df,mask_],axis = 1)
+        #print(b_df)
         #colur_=original_df.style.apply(lambda x:bool_df.applymap(color_mismatch),axis = None).to_excel("Output.xlsx",index=False)
 
-    b_df1 = b_df[(b_df == False).any(axis=0)]
+    b_df1 = b_df[(np.bool(b_df) == False).any(axis=0)]
     print(b_df1)
     updated_df = original_df.iloc[b_df1.index]
     print(b_df1)
