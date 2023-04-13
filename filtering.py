@@ -81,38 +81,30 @@ class Arithmetic:
 
 
 class multiple_col:
-    def __init__(self, dataframe: pd.DataFrame, col1: str, col2 :str):
+    def __init__(self, dataframe: pd.DataFrame, col: str, col1 :str):
         self.Dataframe = dataframe
+        self.col = col
         self.col1 = col1
-        self.col2 = col2
 
     def Add_Col_fun(self, source):
-        col_name1 = input("Enter the first column name :")
-        col_name2 = input("Enter the second column name:")
-        source['Added_column'] = source[col_name1] + source[col_name2]
-        print(source)
-        return source
+        self.Dataframe['Added_column'] = self.Dataframe[self.col]+self.Dataframe[self.col1]
+        print(self.Dataframe)
+        return self.Dataframe
 
     def Sub_Col_fun(self, source):
-        col_name1 = input("Enter the first column name :")
-        col_name2 = input("Enter the second column name:")
-        source['subtracted_column'] = source[col_name1] - source[col_name2]
-        print(source)
-        return source
+        self.Dataframe['Added_column'] = self.Dataframe[self.col] - self.Dataframe[self.col1]
+        print(self.Dataframe)
+        return self.Dataframe
 
     def Mul_Col_fun(self, source):
-        col_name1 = input("Enter the first column name :")
-        col_name2 = input("Enter the second column name:")
-        source['multiplied_column'] = source[col_name1] * source[col_name2]
-        print(source)
-        return source
+        self.Dataframe['Added_column'] = self.Dataframe[self.col] * self.Dataframe[self.col1]
+        print(self.Dataframe)
+        return self.Dataframe
 
     def Div_Col_fun(self, source):
-        col_name1 = input("Enter the first column name :")
-        col_name2 = input("Enter the second column name:")
-        source['Divison_column'] = source[col_name1] / source[col_name2]
-        print(source)
-        return source
+        self.Dataframe['Added_column'] = self.Dataframe[self.col] / self.Dataframe[self.col1]
+        print(self.Dataframe)
+        return self.Dataframe
 
 
 @dataclass
@@ -162,11 +154,11 @@ class Currency_conversion:
          return self.Dataframe
 
     def INR_TO_RAND(self,source):
-        self.Dataframe['Rand'] = self.Dataframe[self.col] / 81.88
+        self.Dataframe['Rand'] = self.Dataframe[self.col] * 4.48
         return self.Dataframe
 
 class Filter(DataType, Datetime, Arithmetic, String):
-    def __init__(self, dataframe: pd.DataFrame, col: str, op, val: int = None, type_: str = None):
+    def __init__(self, dataframe: pd.DataFrame, col: str, op, val: int = None, type_: str = None,col1 : str =None):
         self.op = op
         self.type_ = type_
         String.__init__(self, dataframe=dataframe, col=col)
@@ -174,7 +166,7 @@ class Filter(DataType, Datetime, Arithmetic, String):
         Datetime.__init__(self, dataframe=dataframe, col=col, type_=type_)
         DataType.__init__(self, dataframe=dataframe, col=col, type_=type_)
         Currency_conversion.__init__(self, dataframe=dataframe, col=col)
-        multiple_col.init(self,dataframe = dataframe, col1 = col1, col2 =col2)
+        multiple_col.__init__(self,dataframe = dataframe, col = col, col1 =col1)
 
     def operation(self):
         print("op", self.op)
