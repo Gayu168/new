@@ -157,8 +157,24 @@ class Currency_conversion:
         self.Dataframe['Rand'] = self.Dataframe[self.col] * 4.48
         return self.Dataframe
 
+
+
+class Swap():
+    def __init__(self,dataframe ,index1: int = None,index2: int = None):
+        self.Dataframe = dataframe
+        self.index1 = index1
+        self.index2 = index2
+
+    def swap_rows(self, source):
+       # index1 = int(input("enter the row index want to be change:"))
+       # index2 = int(input("enter the row index have to replace in given position:"))
+        Dataframe.iloc[index1], Dataframe.iloc[index2] = Dataframe.iloc[index2].copy(), Dataframe.iloc[index1].copy()
+        print(source)
+        return source
+
+
 class Filter(DataType, Datetime, Arithmetic, String):
-    def __init__(self, dataframe: pd.DataFrame, col: str, op, val: int = None, type_: str = None,col1 : str =None):
+    def __init__(self, dataframe: pd.DataFrame, col: str, op, val: int = None, type_: str = None,col1 : str =None,index1 : int = None ,index2 : int = None ):
         self.op = op
         self.type_ = type_
         String.__init__(self, dataframe=dataframe, col=col)
@@ -167,6 +183,7 @@ class Filter(DataType, Datetime, Arithmetic, String):
         DataType.__init__(self, dataframe=dataframe, col=col, type_=type_)
         Currency_conversion.__init__(self, dataframe=dataframe, col=col)
         multiple_col.__init__(self,dataframe = dataframe, col = col, col1 =col1)
+        Swap().__init__(self,dataframe = dataframe,index1 = index1,index2 = index2)
 
     def operation(self):
         print("op", self.op)
