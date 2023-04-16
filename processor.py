@@ -51,7 +51,7 @@ class Dataprocessor:
         return self.Store
 
     def filter(self, col: str, op, val: int = None, type_: str = None) -> pd.DataFrame:
-        fltr = Filter(dataframe=self.Store, col=col, val=val, type_=type_, op=op)
+        fltr = Filter(dataframe=self.Store, col=col, val=val, type_=type_, op=op, col1=col1)
         return fltr.operation()
 
     def get_schema(self):

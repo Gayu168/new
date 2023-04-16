@@ -9,10 +9,7 @@ class Compare:
     """
     Compare the source and target dataframe from user
     """
-    src: pd.DataFrame
-    tar: pd.DataFrame
-    bool_frame: pd.DataFrame = None
-    original_frame: pd.DataFrame = None
+
 
     def concat_col(self, source_col_: str, target_col_: str) -> pd.DataFrame:
         """
