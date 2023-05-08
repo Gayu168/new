@@ -3,10 +3,10 @@ from typing import Union, List
 from dataclasses import dataclass
 import pandas as pd
 from file_connection import FileConnection
-from db_connection import DatabaseConnection
+#from db_connection import DatabaseConnection
 from filtering import Sorting, Filter
 from profiilng import json_profiling
-from config import Database_url
+#from config import Database_url
 
 
 @dataclass
@@ -50,7 +50,7 @@ class Dataprocessor:
         self.Store = self.Store.sort_values(by=sort_cols.cols, ascending=True)
         return self.Store
 
-    def filter(self, col: str, op, val: int = None, type_: str = None) -> pd.DataFrame:
+    def filter(self, col: str,op, col1:str = None, val: int = None, type_: str = None) -> pd.DataFrame:
         fltr = Filter(dataframe=self.Store, col=col, val=val, type_=type_, op=op, col1=col1)
         return fltr.operation()
 

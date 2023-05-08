@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from typing import Union, List
 from dataclasses import dataclass
+import pyarrow as pa
+import pyarrow.compute as pc
 
 
 @dataclass
@@ -25,7 +27,11 @@ class DataType:
         self.type_ = type_
 
     def convert(self):
-        self.Dataframe.astype({f"{self.col}:{self.type_}"})
+
+        self.Dataframe[self.col] = self.Dataframe[self.col].astype(self.type_)
+        print(self.Dataframe)
+        return self.Dataframe
+
 
 
 class Arithmetic:
@@ -80,28 +86,28 @@ class Arithmetic:
         return self.Dataframe
 
 
-class multiple_col:
+class Multiple_col:
     def __init__(self, dataframe: pd.DataFrame, col: str, col1 :str):
         self.Dataframe = dataframe
         self.col = col
         self.col1 = col1
 
-    def Add_Col_fun(self, source):
+    def add_col_fun(self):
         self.Dataframe['Added_column'] = self.Dataframe[self.col]+self.Dataframe[self.col1]
         print(self.Dataframe)
         return self.Dataframe
 
-    def Sub_Col_fun(self, source):
+    def sub_col_fun(self):
         self.Dataframe['Added_column'] = self.Dataframe[self.col] - self.Dataframe[self.col1]
         print(self.Dataframe)
         return self.Dataframe
 
-    def Mul_Col_fun(self, source):
+    def mul_col_fun(self):
         self.Dataframe['Added_column'] = self.Dataframe[self.col] * self.Dataframe[self.col1]
         print(self.Dataframe)
         return self.Dataframe
 
-    def Div_Col_fun(self, source):
+    def div_col_fun(self):
         self.Dataframe['Added_column'] = self.Dataframe[self.col] / self.Dataframe[self.col1]
         print(self.Dataframe)
         return self.Dataframe
@@ -110,17 +116,31 @@ class multiple_col:
 @dataclass
 class String:
 
-    def __init__(self, dataframe: pd.DataFrame, col: str):
+    def __init__(self, dataframe: pd.DataFrame, col: str,col1:str = None):
         self.Dataframe = dataframe
         self.col = col
+        self.col1 = col1
 
     def upper(self):
-        self.Dataframe[self.col] = np.char.upper(self.Dataframe[self.col])
+        #self.Dataframe[self.col] = pc.compute.ascii_upper(self.Dataframe[self.col])
+        #self.Dataframe[self.col] = pc.utf8_upper(self.Dataframe[self.col])
+        self.Dataframe[self.col] = self.Dataframe[self.col].str.upper().astype(str)
         print(self.Dataframe)
         return self.Dataframe
 
     def lower(self):
-        self.Dataframe[self.col] = np.char.lower(self.Dataframe[self.col])
+        self.Dataframe[self.col] = self.Dataframe[self.col].str.lower().astype(str)
+        print(self.Dataframe)
+        return self.Dataframe
+
+    def split(self):
+        split_key = input("Enter split_key for converting:")
+        self.Dataframe[self.col] = self.Dataframe[self.col].str.split(split_key)
+        print(self.Dataframe)
+        return self.Dataframe
+
+    def concat(self):
+        self.Dataframe[self.col] = self.Dataframe[self.col]+"" +self.Dataframe[self.col1]
         print(self.Dataframe)
         return self.Dataframe
 
@@ -138,52 +158,52 @@ class Datetime:
 
 class Currency_conversion:
     def __init__(self, dataframe, col:str):
-        self.Dataframe[self.col]= dataframe
+        self.Dataframe = dataframe
         self.col = col
 
-    def USD_TO_INR(self):
+    def usd_to_inr(self):
         self.Dataframe['Indian_rupee'] = self.Dataframe[self.col]* 81.88
         return self.Dataframe
 
-    def INR_TO_USD(self,source):
+    def inr_to_usd(self):
         self.Dataframe['USD'] = self.Dataframe[self.col] / 81.88
         return self.Dataframe
 
-    def RAND_TO_INR(self,source):
+    def rand_to_inr(self):
          self.Dataframe['INR'] = self.Dataframe[self.col] / 4.48
          return self.Dataframe
 
-    def INR_TO_RAND(self,source):
+    def inr_to_rand(self):
         self.Dataframe['Rand'] = self.Dataframe[self.col] * 4.48
         return self.Dataframe
 
 
 
 class Swap():
-    def __init__(self,dataframe ,index1: int = None,index2: int = None):
+    def __init__(self,dataframe ):       #,index1: int = None,index2: int = None
         self.Dataframe = dataframe
-        self.index1 = index1
-        self.index2 = index2
+      #  self.index1 = index1
+       # self.index2 = index2
 
-    def swap_rows(self, source):
-       # index1 = int(input("enter the row index want to be change:"))
-       # index2 = int(input("enter the row index have to replace in given position:"))
-        Dataframe.iloc[index1], Dataframe.iloc[index2] = Dataframe.iloc[index2].copy(), Dataframe.iloc[index1].copy()
-        print(source)
-        return source
+    def swap_rows(self):
+        index1 = int(input("enter the row index want to be change:"))
+        index2 = int(input("enter the row index have to replace in given position:"))
+        self.Dataframe.iloc[index1], self.Dataframe.iloc[index2] =self.Dataframe.iloc[index2].copy(), self.Dataframe.iloc[index1].copy()
+        print(self.Dataframe)
+        #return source
 
 
-class Filter(DataType, Datetime, Arithmetic, String):
-    def __init__(self, dataframe: pd.DataFrame, col: str, op, val: int = None, type_: str = None,col1 : str =None,index1 : int = None ,index2 : int = None ):
+class Filter(Multiple_col,DataType, Datetime, Arithmetic, String):
+    def __init__(self, dataframe: pd.DataFrame, col: str, op, val: int = None, type_: str = None, col1 : str = None,index1 : int = None ,index2 : int = None ):
         self.op = op
         self.type_ = type_
-        String.__init__(self, dataframe=dataframe, col=col)
+        String.__init__(self, dataframe=dataframe, col=col,col1 = col1)
         Arithmetic.__init__(self, dataframe=dataframe, col=col, val=val)
         Datetime.__init__(self, dataframe=dataframe, col=col, type_=type_)
         DataType.__init__(self, dataframe=dataframe, col=col, type_=type_)
         Currency_conversion.__init__(self, dataframe=dataframe, col=col)
-        multiple_col.__init__(self,dataframe = dataframe, col = col, col1 =col1)
-        Swap().__init__(self,dataframe = dataframe,index1 = index1,index2 = index2)
+        Multiple_col.__init__(self,dataframe = dataframe, col = col, col1 =col1)
+        Swap.__init__(self,dataframe=dataframe)
 
     def operation(self):
         print("op", self.op)
