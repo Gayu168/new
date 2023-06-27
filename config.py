@@ -1,16 +1,21 @@
 import os
-
+from cryptography.fernet import Fernet
 from dotenv import load_dotenv, find_dotenv
-
-load_dotenv(find_dotenv())
-
-Database_url = os.getenv('DATABASE_URL')
-
+from credentails import user_details
 
 def credentials_to_url():
-    user = os.getenv('User')
-    password = os.getenv('password')
-    host = os.getenv('host')
-    port = os.getenv('port')
-    database = os.getenv('database')
-    return f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}"
+
+
+    details = user_details()
+    user, encMessage, host, port, database, fernet = details.encode()
+    decMessage = fernet.decrypt(encMessage).decode()
+    #print("decrypted string: ", decMessage)
+    db_type =input("Enter the database type:")
+    if db_type == 'mysql':
+       Database_url = f"mysql+pymysql://{user}:{decMessage}@{host}:{port}/{database}"
+       return Database_url
+    else:
+        Database_url = f"postgresql+psycopg2://{user}:{decMessage}@{host}:{port}/{database}"
+        return Database_url
+
+
